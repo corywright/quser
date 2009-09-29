@@ -1,0 +1,15 @@
+Written by Cory Wright - cwright /at/ standblue.net 
+
+To install quser just unpack the tarball, cd into the quser src 
+directory, and do the normal make and  make install routine.
+
+  tar xzf quser-0.8.tar.gz
+  cd quser-0.8
+  make
+  make test (optional)
+  sudo make install
+
+cmaildir will be installed in /usr/local/bin/ while validate-sender,
+validate-recipient, mybadmailto, and mybadmailfrom will be installed 
+in /var/qmail/bin/ . If you don't like this then just change the 
+Makefile, but I feel that these are the best places for these programs.

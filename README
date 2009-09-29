@@ -1,0 +1,116 @@
+Written by Cory Wright - cwright /at/ standblue.net
+
+You can find the most up to date documentation online at 
+http://projects.standblue.net/software/quser/index.moto
+
+Tools included with quser.
+
+* cmaildir
+* validate-sender
+* validate-recipient
+* mybadmailfrom
+* mybadmailto
+
+
+cmaildir is a short C program for checking Maildir's for 
+new mail. If run with no arguments cmaildir checks ~/Maildir/ 
+for new mail and also reports messages in the inbox. If 
+arguments are passed to cmaildir then it expects them to be 
+paths to Maildir style directories, but do not include the 
+/cur/ and /new/ portions, the Maildir is the set together. 
+I wrote cmaildir because I use Courier-IMAP and it uses 
+Maildirs for its folders. I have my list addresses setup to 
+go straight into my IMAP folders so with cmaildir I can run 
+the following to get a status of all my folders 
+(including ~/Maildir/):
+
+  shell$ cmaildir ~/Maildir/.Lists.qmail/ ~/Maildir/.Lists.moto/
+  You have 6 new messages, 37 saved
+
+While this may not be that convenient to type at a command 
+line, its most useful in a .bash_profile file or as a bash 
+alias.
+
+
+
+validate-sender is a little C program I wrote because I needed 
+to check a sender against a list before allowing it to post to 
+an address. I had setup an address for people to add addresses 
+to badmailfrom but only wanted certain users to be able to have 
+this ability. validate-sender is designed to be called from a 
+.qmail file after bouncesaying or condredirect. It takes the 
+filename of the list file as an argument. The list file should 
+contain a list of addresses or domains, one per line. Domain 
+entries can either be in the form @site.dom or site.dom. For 
+example:
+
+  |bouncesaying "You are not in my list of allowed senders" validate-sender /etc/badmailadders
+  |/usr/local/bin/addtobadmailfrom
+
+Or, with condredirect to alert me when somebody tries to submit:
+
+  |condredirect myemailaddress validate-sender /etc/badmailadders
+  |/usr/local/bin/addtobadmailfrom
+
+validate-sender returns 1 if a match is found, and 0 if no match 
+is found. 111 is returned if there is an error. I stick validate-sender 
+in /var/qmail/bin since the only place it will probably ever be 
+used is with qmail. 
+
+Please note that no method is fool proof against forgeries, 
+just see what djb has to say. In other words, dont trust your 
+system to anything like this, it should only be used for trivial 
+checks.
+
+
+The validate-recipient program is very similar to the validate-sender
+program, except it checks against the value of the SMTP envelope recipient 
+address. This is mainly for use in .qmail-default files. For example, if 
+all of your mail passes through a mail gateway that forwards mail using 
+smtproutes then you probably use a .qmail-default file for this. If you 
+know in advance the complete list of addresses that should be forwarded 
+then you can block anything else from being forwarded.
+
+
+  |bouncesaying "No mailbox by that name." validate-recipient /path/to/addresses.txt
+  |forward "$DEFAULT"@someotherserver.example.com
+
+
+validate-recipient uses the same exit codes as validate-sender. 
+
+mybadmailfrom is a program that allows individual users to manage 
+their own badmailfrom lists. If a user is sick of getting mail from 
+a certain address or domain then all they need to do is add it to 
+their personal badmailfrom list. Once the list is ready the user can 
+add a line to their .qmail file before all the rest:
+
+  |mybadmailfrom ~/Maildir/mybadmailfrom
+  ./Maildir/
+
+Although messages from addresses listed in ~/Maildir/mybadmailfrom will
+bounce, I should note that this works in a very different way from the 
+badmailfrom file that qmail-smtpd uses. Addresses listed in 
+/var/qmail/control/badmailfrom are blocked at the SMTP connection. 
+Addresses listed in mybadmailfrom must first be accepted into the 
+system so that qmail-local can run the .qmail file.
+
+
+mybadrcptto is useful for blocking certain recipient addresses in a 
+.qmail-default file. For example, if you have a qmail gateway that scans 
+all mail for spam or viruses and forwards accepted mail onto another server, 
+you may want to block certain invalid or expired addresses. The badmailrcpto 
+program will allow you to maintain a list of addresses that you dont want to 
+pass through:
+
+  |mybadrcptto ~/ex-employees.txt
+  |forward "$DEFAULT"@internal.example.com
+
+With this setup any mail sent to an address thats listed in the 
+~/ex-employees.txt file will bounce. All other mail will pass through 
+and be forwarded to the internal server. There is a patch available for 
+qmail that will block certain RCPT TO: addresses at the SMTP conversation. 
+The advantage to using mybadrcptto is that 1) you do not need to patch qmail, 
+and 2) individual users can implement their own badrcptto lists. The 
+disadvantage to using the mybadrcptto program as opposed to the patch is 
+that all email must first be accepted into the system, and only then can 
+qmail-local run the mybadrcptto program to check the recipient.

@@ -1,0 +1,6 @@
+The validate-sender program (as well as the mybadmailfrom program)
+only checks the SENDER environment variable.  This variable is set
+by qmail-command using the value of MAIL FROM: from the SMTP 
+conversation.  This can easily be forged, so you should not trust
+anything mission critical to the validate-sender program.  It is
+only meant to help with trivial checks.
