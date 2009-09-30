@@ -1,15 +1,15 @@
 Written by Cory Wright - cwright /at/ standblue.net
 
 You can find the most up to date documentation online at 
-http://projects.standblue.net/software/quser/index.moto
+http://projects.standblue.net/software/quser/
 
 Tools included with quser.
 
-* cmaildir
-* validate-sender
-* validate-recipient
-* mybadmailfrom
-* mybadmailto
+  * cmaildir
+  * validate-sender
+  * validate-recipient
+  * mybadmailfrom
+  * mybadmailto
 
 
 cmaildir is a short C program for checking Maildir's for 
@@ -30,7 +30,6 @@ the following to get a status of all my folders
 While this may not be that convenient to type at a command 
 line, its most useful in a .bash_profile file or as a bash 
 alias.
-
 
 
 validate-sender is a little C program I wrote because I needed 
