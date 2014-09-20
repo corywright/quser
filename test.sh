@@ -88,7 +88,7 @@ env RECIPIENT="a@d.com" ./validate-recipient addylist
 chret "1" $?
 
 echo " * Testing the mybadmailfrom program"
-echo 
+echo
 
 echo "Testing empty \$SENDER"
 ./mybadmailfrom list
@@ -119,7 +119,7 @@ env SENDER="a@d.com" ./mybadmailfrom addylist
 chret "100" $?
 
 echo " * Testing the mybadrcptto program"
-echo 
+echo
 
 echo "Testing empty \$RECIPIENT"
 ./mybadrcptto list

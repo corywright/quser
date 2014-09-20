@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "quser.h"
 
-int main(int argc, char **argv) { 
+int main(int argc, char **argv) {
 
   char *newdir=NULL;
   char *curdir=NULL;
